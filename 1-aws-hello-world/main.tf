@@ -14,16 +14,16 @@ provider "aws" {
 }
 
 resource "aws_instance" "app_server" {
-  ami           = "ami-09cd747c78a9add63"
+  ami           = "ami-0557a15b87f6559cf"
   instance_type = "t2.micro"
   key_name = "hello-world-terraform"
-  user_data = <<-EOF
-                #!/bin/bash
-                cd /home/ubuntu
-                echo "<h1>Mensagem a ser mostrada</h1>" > index.html
-                nohup busybox httpd -f -p 8080 &
-                EOF
+  user_data =  <<-EOF
+                  #!/bin/bash
+                  cd /home/ubuntu
+                  echo "<h1>Feito com Terraform</h1>" > index.html
+                  nohup python3 -m http.server 8080
+                  EOF
   tags = {
-    Name = "Teste AWS"
+    Name = "1-aws-hello-world"
   }
 }
