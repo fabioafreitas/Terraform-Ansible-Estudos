@@ -1,0 +1,26 @@
+- hosts: terraform-ansible
+  tasks:
+    - name: Instalando o python3, virtualenv
+      apt:
+        pkg:
+          - python3
+          - virtualenv
+        update_cache: yes
+      become: yes
+    - name: Instalando dependências com o pip (Django e Django Rest)
+      pip:
+        virtualenv: /home/ubuntu/tcc/venv
+        name:
+          - django
+          - djangorestframework
+    - name: Inicianco o projeo
+      shell: '. /home/ubuntu/tcc/venv/bin/activate; cd /home/ubuntu/tcc; rm -rf db.sqlite3 manage.py setup/; django-admin startproject setup /home/ubuntu/tcc/'
+    - name: Alterando o hosts do settings
+      lineinfile:
+        path: /home/ubuntu/tcc/setup/settings.py
+        regexp: 'ALLOWED_HOSTS'
+        line: 'ALLOWED_HOSTS = ["*"]'
+        backrefs: yes
+    - name: Iniciando servidor Django
+      # não funcionou com o nohup [...] &, nem com screen -d -m [...]
+      shell: "nohup python3 /home/ubuntu/tcc/manage.py runserver 0.0.0.0:8080 &" 
